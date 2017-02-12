@@ -1,9 +1,10 @@
+#!/usr/bin/python
 from bs4 import BeautifulSoup
 import requests
 import time
 
 print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-print "This tool is to create security group base"
+print "This tool is to show the member of security group in your NSX manager"
 print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 print "\n"
 # Author: David Zhang
@@ -15,11 +16,12 @@ sg_infile = open(sg,"r")
 contents = sg_infile.read()
 soup = BeautifulSoup(contents,'xml')
 date = time.strftime("%Y-%m-%d-%H-%M-%S")
-print date
 filename = "sgnamelist_"+date+".txt"
 def sg_check():
 	for child in soup.list.securitygroup:
+		#1st security group
 		key = child.name
+		# key: all tags in the 1st security group
 		count = 0
         	if key == "name":
 			print "\n"
