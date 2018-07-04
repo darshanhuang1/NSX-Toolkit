@@ -21,11 +21,12 @@ api_url = "https://" + nsxmip + "/api/4.0/firewall/globalroot-0/config"
 #Get current working directory
 cwd = os.getcwd()
 
+# API request to get DFW rules
 def send_request():
     try:
         response = requests.get(
             url=api_url,
-            verify=False,  
+            verify=False,
             headers={
                 "Authorization": auth,
                 "Content-Type": "application/json",
@@ -53,20 +54,16 @@ csvfilename = "dfwrules_" + date +".csv"
 csvfile = open(csvfilename, "w")
 writer=csv.writer(csvfile)
 
-# Two ways to open a file
-#with open('./site1_dfwrules_2018-06-26-07-17-39.json', 'r') as f:
-#    data = json.load(f)
+# open dfw json a file
 fullpath = cwd + "/" + filename
 f =codecs.open(fullpath, 'r', 'UTF-8')
 data = json.load(f)
-print type(data)
 
 sections=data["layer3Sections"]["layer3Sections"]
-#print type(sections)
-#print "how many section in total: " 
-#print len(sections)
+
+#how many security group sections
 sectionCount = len(sections)
-#headers=['ruleId','name','sectionId','direction','disabled','sourceName','sourceType','destinationName','destinationType','serviceName','serviceType','protocolName','destinationPort','serviceValue','action','applied-to']
+
 headers =['ruleId','name','sectionId','direction','disabled','source','destination','service','action','applied-to','logged']
 writer.writerow(headers)
 for i in range(sectionCount):
@@ -74,7 +71,7 @@ for i in range(sectionCount):
 	section_json = json.dumps(section, indent = 4)
 	rule_list=section["rules"]
 	#rules type is "list"
-	#print "how many rules in this section: "
+	#how many rules in this section
 	ruleCount = len(rule_list)
 	for h in range(ruleCount):
 		rule = rule_list[h]
@@ -114,8 +111,8 @@ for i in range(sectionCount):
 		else:
 			ruleSourceCSVLists = ['any','any']
 		rlist.append(ruleSourceCSVLists)
-		
-		#firewall rule destionation	
+
+		#firewall rule destionation
 		ruleDestinationCSVLists = []
                 if(rule.get("destinations",0) > 0):
                         ruleDestinations = rule["destinations"]
@@ -150,7 +147,7 @@ for i in range(sectionCount):
                                 	ruleServiceType = ruleServiceList[s]["type"]
                         	except:
                                 	ruleServiceType = "n/a"
-                        	try: 
+                        	try:
                                 	ruleServiceValue = ruleServiceList[s]["value"]
                         	except:
                                 	ruleServiceValue = "n/a"
@@ -175,25 +172,25 @@ for i in range(sectionCount):
 
 				#if ruleServiceType != "n/a":
 				#	ruleServiceCSVList.append(ruleServiceType.encode("utf-8"))
-				
+
 				if ruleprotocolName != "n/a":
 					ruleServiceCSVList.append(ruleprotocolName.encode("utf-8"))
-				
+
 				if ruledestinationPort != "n/a":
 					ruleServiceCSVList.append(ruledestinationPort.encode("utf-8"))
-				
+
 				if ruleServiceValue != "n/a":
 					ruleServiceCSVList.append(ruleServiceValue.encode("utf-8"))
-	
+
 				ruleServiceCSVLists.append(ruleServiceCSVList)
                 else:
 			ruleServiceCSVLists = ['any']
                 rlist.append(ruleServiceCSVLists)
-		
+
 		#firewall rule action:allow/deny/block
 		ruleAction = rule["action"]
 		rlist.append(ruleAction)
-		
+
 		#firewall rule applied to
 		ruleApplied = rule["appliedToList"]
                 ruleAppliedToList = ruleApplied["appliedToList"]
@@ -210,7 +207,7 @@ for i in range(sectionCount):
                         	ruleAppliedToListType = "n/a"
                 	appliedList.append(ruleAppliedToListName.encode("utf-8"))
                 	#appliedList.append(ruleAppliedToListType.encode("utf-8"))
-			appliedList.append(ruleAppliedToListValue.encode("utf-8"))			
+			appliedList.append(ruleAppliedToListValue.encode("utf-8"))
 			appliedLists.append(appliedList)
 		rlist.append(appliedLists)
 		#firewall rule log setting
