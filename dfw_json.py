@@ -9,7 +9,7 @@ from base64 import b64encode
 import getpass
 
 nsxmip=raw_input('Enter NSXManager IP: ')
-username=raw_input('Enter your AD account (e.g.wbcibm\l0888880): ')
+username=raw_input('Enter your AD account (e.g.ad\l0888880): ')
 yourpass = getpass.getpass('Enter passowrd: ')
 userandpass=username+":"+yourpass
 userpass = b64encode(userandpass).decode("ascii")
