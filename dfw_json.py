@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import json
 import os
 import csv
@@ -15,11 +16,13 @@ userandpass=username+":"+yourpass
 userpass = b64encode(userandpass).decode("ascii")
 auth ="Basic " + userpass
 date = time.strftime("%Y-%m-%d-%H-%M-%S")
-filename = "dfwrules_"+date+".json"
+
 api_url = "https://" + nsxmip + "/api/4.0/firewall/globalroot-0/config"
 
 #Get current working directory
 cwd = os.getcwd()
+#define DFW json file name 
+dfwJsonFile = cwd + "/" + "dfwrules_"+date +".json"
 
 # API request to get DFW rules
 def send_request():
@@ -43,7 +46,7 @@ def send_request():
                 print "Your request is successful."
         dfwrules=response.text
         #ipnet=json.dumps(ipnet, indent=4)
-        dfwFile = open(filename,'w')
+        dfwFile = open(dfwJsonFile,'w')
         dfwFile.write(dfwrules)
         dfwFile.close()
     except requests.exceptions.RequestException:
@@ -55,8 +58,7 @@ csvfile = open(csvfilename, "w")
 writer=csv.writer(csvfile)
 
 # open dfw json a file
-fullpath = cwd + "/" + filename
-f =codecs.open(fullpath, 'r', 'UTF-8')
+f =codecs.open(dfwJsonFile, 'r', 'UTF-8')
 data = json.load(f)
 
 sections=data["layer3Sections"]["layer3Sections"]
